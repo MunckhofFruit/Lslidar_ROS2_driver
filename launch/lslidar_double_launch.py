@@ -38,25 +38,25 @@ def generate_launch_description():
                                           parameters=[driver_dir_right],
                                           )
 
-    elif ros_version == b'foxy\n' or ros_version == b'galactic\n' or ros_version == b'humble\n':
-        print("ROS VERSION: foxy/galactic/humble")
-        driver_node_left = LifecycleNode(package='lslidar_ch_driver',
-                                         namespace='CH_left',
-                                         executable='lslidar_ch_driver_node',
-                                         name='lslidar_ch_driver_node',
-                                         output='screen',
-                                         emulate_tty=True,
-                                         parameters=[driver_dir_left],
-                                         )
+    elif ros_version == b'foxy\n' or ros_version == b'galactic\n' or ros_version == b'humble\n' or ros_version == b'jazzy\n':
+        print("ROS VERSION: foxy/galactic/humble/jazzy")
+        driver_node_left = Node(package='lslidar_ch_driver',
+                                namespace='CH_left',
+                                executable='lslidar_ch_driver_node',
+                                name='lslidar_ch_driver_node',
+                                output='screen',
+                                emulate_tty=True,
+                                parameters=[driver_dir_left],
+                                )
 
-        driver_node_right = LifecycleNode(package='lslidar_ch_driver',
-                                          namespace='CH_right',
-                                          executable='lslidar_ch_driver_node',
-                                          name='lslidar_ch_driver_node',
-                                          output='screen',
-                                          emulate_tty=True,
-                                          parameters=[driver_dir_right],
-                                          )
+        driver_node_right = Node(package='lslidar_ch_driver',
+                                 namespace='CH_right',
+                                 executable='lslidar_ch_driver_node',
+                                 name='lslidar_ch_driver_node',
+                                 output='screen',
+                                 emulate_tty=True,
+                                 parameters=[driver_dir_right],
+                                 )
 
     else:
         print("Please configure the ros environment")

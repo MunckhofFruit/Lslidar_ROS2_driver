@@ -30,16 +30,16 @@ def generate_launch_description():
                                     parameters=[driver_dir],
                                     )
         
-    elif ros_version == b'foxy\n' or ros_version == b'galactic\n' or ros_version == b'humble\n':
-        print("ROS VERSION: foxy/galactic/humble")
-        driver_node = LifecycleNode(package='lslidar_ch_driver',
-                                    namespace='CH',
-                                    executable='lslidar_ch_driver_node',
-                                    name='lslidar_ch_driver_node',
-                                    output='screen',
-                                    emulate_tty=True,
-                                    parameters=[driver_dir],
-                                    )
+    elif ros_version == b'foxy\n' or ros_version == b'galactic\n' or ros_version == b'humble\n' or ros_version == b'jazzy\n':
+        print("ROS VERSION: foxy/galactic/humble/jazzy")
+        driver_node = Node(package='lslidar_ch_driver',
+                           namespace='CH',
+                           executable='lslidar_ch_driver_node',
+                           name='lslidar_ch_driver_node',
+                           output='screen',
+                           emulate_tty=True,
+                           parameters=[driver_dir],
+                           )
         
     else:
         print("Please configure the ros environment")
