@@ -27,6 +27,7 @@
 #include <sensor_msgs/msg/laser_scan.hpp>
 #include <std_msgs/msg/string.h>
 #include <lslidar_ch_driver/msg/lslidar_packet.hpp>
+#include "lslidar_services.h"
 #include "ThreadPool.h"
 
 namespace lslidar_ch_driver {
@@ -217,6 +218,15 @@ namespace lslidar_ch_driver {
         std::mutex pointcloud_lock;
         rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pointcloud_pub;
         rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr laserscan_pub;
+
+        std::shared_ptr<LslidarServices> services_;
+        rclcpp::Service<lslidar_ch_driver::srv::IpAndPort>::SharedPtr network_config_service_;
+        rclcpp::Service<lslidar_ch_driver::srv::MotorSpeed>::SharedPtr motor_speed_service_;
+        rclcpp::Service<lslidar_ch_driver::srv::MotorControl>::SharedPtr motor_control_service_;
+        rclcpp::Service<lslidar_ch_driver::srv::PowerControl>::SharedPtr power_control_service_;
+        rclcpp::Service<lslidar_ch_driver::srv::RfdRemoval>::SharedPtr rfd_removal_service_;
+        rclcpp::Service<lslidar_ch_driver::srv::TailRemoval>::SharedPtr tail_removal_service_;
+        rclcpp::Service<lslidar_ch_driver::srv::TimeMode>::SharedPtr time_mode_service_;
 
         // add for time synchronization
         bool use_time_service;

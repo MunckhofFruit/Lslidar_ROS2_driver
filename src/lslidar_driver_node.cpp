@@ -1,3 +1,4 @@
+#include <thread>
 #include "lslidar_ch_driver/lslidar_driver.h"
 
 using namespace lslidar_ch_driver;
@@ -20,8 +21,18 @@ int main(int argc, char **argv) {
         return 0;
     }
 
-    while (rclcpp::ok()) {
-        node->polling();
+    std::thread poll_thread([&node]() {
+        while (rclcpp::ok() && flag) {
+            if (!node->polling()) {
+                break;
+            }
+        }
+    });
+
+    rclcpp::spin(node);
+    flag = 0;
+    if (poll_thread.joinable()) {
+        poll_thread.join();
     }
 
     rclcpp::shutdown();

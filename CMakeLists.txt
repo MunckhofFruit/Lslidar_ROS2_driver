@@ -31,6 +31,16 @@ set(msg_files
    "msg/LslidarPacket.msg"
 )
 
+set(srv_files
+   "srv/IpAndPort.srv"
+   "srv/MotorControl.srv"
+   "srv/MotorSpeed.srv"
+   "srv/PowerControl.srv"
+   "srv/RfdRemoval.srv"
+   "srv/TailRemoval.srv"
+   "srv/TimeMode.srv"
+)
+
 include_directories(
         include
         ${PCL_INCLUDE_DIRS}
@@ -38,10 +48,11 @@ include_directories(
 
 rosidl_generate_interfaces(lslidar_soild
   ${msg_files}
+  ${srv_files}
   DEPENDENCIES builtin_interfaces std_msgs sensor_msgs
 )
 
-add_executable(lslidar_ch_driver_node src/lslidar_driver_node.cpp src/lslidar_driver.cpp src/input.cpp)
+add_executable(lslidar_ch_driver_node src/lslidar_driver_node.cpp src/lslidar_driver.cpp src/input.cpp src/lslidar_services.cpp)
 target_link_libraries(lslidar_ch_driver_node ${rclcpp_LIBRARIES}  ${libpcap_LIBRARIES})
 ament_target_dependencies(lslidar_ch_driver_node rclcpp std_msgs sensor_msgs pcl_conversions)#ament_index_cpp
 

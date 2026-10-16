@@ -38,6 +38,7 @@ namespace lslidar_ch_driver {
         prism_offset = 0.0;
         last_packet_timestamp = 0.0;
         is_update_difop_packet = false;
+        services_ = std::make_shared<LslidarCxServices>();
         for (int j = 0; j < 36000; ++j) {
             sin_list[j] = sin(j * 0.01 * DEG_TO_RAD);
             cos_list[j] = cos(j * 0.01 * DEG_TO_RAD);
@@ -136,6 +137,48 @@ namespace lslidar_ch_driver {
         // ROS diagnostics
         pointcloud_pub = this->create_publisher<sensor_msgs::msg::PointCloud2>(pointcloud_topic, 10);
         laserscan_pub = this->create_publisher<sensor_msgs::msg::LaserScan>("scan", 10);
+
+        network_config_service_ = this->create_service<lslidar_ch_driver::srv::IpAndPort>("network_setup",
+            [this](std::shared_ptr<lslidar_ch_driver::srv::IpAndPort::Request> req,
+                   std::shared_ptr<lslidar_ch_driver::srv::IpAndPort::Response> res) {
+                std::dynamic_pointer_cast<LslidarCxServices>(services_)->setIpAndPort(req, res);
+            });
+
+        motor_speed_service_ = this->create_service<lslidar_ch_driver::srv::MotorSpeed>("motor_speed",
+            [this](std::shared_ptr<lslidar_ch_driver::srv::MotorSpeed::Request> req,
+                   std::shared_ptr<lslidar_ch_driver::srv::MotorSpeed::Response> res) {
+                std::dynamic_pointer_cast<LslidarCxServices>(services_)->setMotorSpeed(req, res);
+            });
+
+        motor_control_service_ = this->create_service<lslidar_ch_driver::srv::MotorControl>("motor_control",
+            [this](std::shared_ptr<lslidar_ch_driver::srv::MotorControl::Request> req,
+                   std::shared_ptr<lslidar_ch_driver::srv::MotorControl::Response> res) {
+                std::dynamic_pointer_cast<LslidarCxServices>(services_)->setMotorControl(req, res);
+            });
+
+        power_control_service_ = this->create_service<lslidar_ch_driver::srv::PowerControl>("power_control",
+            [this](std::shared_ptr<lslidar_ch_driver::srv::PowerControl::Request> req,
+                   std::shared_ptr<lslidar_ch_driver::srv::PowerControl::Response> res) {
+                std::dynamic_pointer_cast<LslidarCxServices>(services_)->setPowerControl(req, res);
+            });
+
+        rfd_removal_service_ = this->create_service<lslidar_ch_driver::srv::RfdRemoval>("remove_rain_fog_dust",
+            [this](std::shared_ptr<lslidar_ch_driver::srv::RfdRemoval::Request> req,
+                   std::shared_ptr<lslidar_ch_driver::srv::RfdRemoval::Response> res) {
+                std::dynamic_pointer_cast<LslidarCxServices>(services_)->setRfdRemoval(req, res);
+            });
+
+        tail_removal_service_ = this->create_service<lslidar_ch_driver::srv::TailRemoval>("tail_remove",
+            [this](std::shared_ptr<lslidar_ch_driver::srv::TailRemoval::Request> req,
+                   std::shared_ptr<lslidar_ch_driver::srv::TailRemoval::Response> res) {
+                std::dynamic_pointer_cast<LslidarCxServices>(services_)->setTailRemoval(req, res);
+            });
+
+        time_mode_service_ = this->create_service<lslidar_ch_driver::srv::TimeMode>("time_mode",
+            [this](std::shared_ptr<lslidar_ch_driver::srv::TimeMode::Request> req,
+                   std::shared_ptr<lslidar_ch_driver::srv::TimeMode::Response> res) {
+                std::dynamic_pointer_cast<LslidarCxServices>(services_)->setTimeMode(req, res);
+            });
 
         if (dump_file != "") {
             if (lidar_type == "CX1S3" || lidar_type == "CX6S3" || lidar_type == "CH16X1" || lidar_type == "CH128S1" || 
@@ -578,6 +621,7 @@ namespace lslidar_ch_driver {
                 if (difop_packet->data[0] == 0xa5 && difop_packet->data[1] == 0xff && 
                     difop_packet->data[2] == 0x00 && difop_packet->data[3] == 0x5a) {
                     is_update_difop_packet = true;
+                    services_->getDifopPacket(difop_packet);
                     
                     if (use_time_service){
                         if (difop_packet->data[44] == 0x00) {
