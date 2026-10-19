@@ -46,7 +46,7 @@ include_directories(
         ${PCL_INCLUDE_DIRS}
 )
 
-rosidl_generate_interfaces(lslidar_soild
+rosidl_generate_interfaces(${PROJECT_NAME}
   ${msg_files}
   ${srv_files}
   DEPENDENCIES builtin_interfaces std_msgs sensor_msgs
@@ -64,9 +64,9 @@ install(TARGETS
         DESTINATION lib/${PROJECT_NAME}
         )
 
-ament_export_dependencies(rclcpp std_msgs sensor_msgs pcl_conversions)
+ament_export_dependencies(rclcpp std_msgs sensor_msgs pcl_conversions rosidl_default_runtime)
 ament_export_include_directories(include ${PCL_COMMON_INCLUDE_DIRS})
 
-rosidl_target_interfaces(lslidar_ch_driver_node lslidar_soild "rosidl_typesupport_cpp")
+rosidl_target_interfaces(lslidar_ch_driver_node ${PROJECT_NAME} "rosidl_typesupport_cpp")
 
 ament_package()
